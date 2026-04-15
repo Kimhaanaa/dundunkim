@@ -120,6 +120,11 @@
 
   .history-empty { text-align: center; padding: 3rem 1rem; color: var(--color-text-tertiary); font-size: 14px; }
   .history-empty-icon { font-size: 48px; display: block; margin-bottom: .75rem; }
+  .history-loading { display: flex; flex-direction: column; gap: 10px; }
+  .skeleton { background: linear-gradient(90deg, var(--color-bg-secondary) 25%, var(--color-bg-tertiary) 50%, var(--color-bg-secondary) 75%); background-size: 200% 100%; animation: shimmer 1.2s infinite; border-radius: var(--radius-lg); }
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+  .skeleton-card { height: 90px; width: 100%; }
+  .skeleton-card-sm { height: 70px; width: 100%; opacity: 0.6; }
   .history-card { background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-bottom: .75rem; box-shadow: 0 2px 8px rgba(180,140,90,0.07); cursor: pointer; transition: all .15s; }
   .history-card:hover { border-color: #FAC775; transform: translateY(-1px); }
   .history-date { font-size: 14px; font-weight: 700; color: var(--color-text); margin-bottom: .6rem; display: flex; align-items: center; justify-content: space-between; }
@@ -373,7 +378,15 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',(tab==='record'&&i===0)||(tab==='history'&&i===1)));
   document.getElementById('tab-record').classList.toggle('active',tab==='record');
   document.getElementById('tab-history').classList.toggle('active',tab==='history');
-  if(tab==='history') renderHistory();
+  if(tab==='history') {
+    const el=document.getElementById('history-list');
+    // 데이터 있으면 바로 렌더, 없으면 스켈레톤
+    if(Object.keys(data).length > 0) {
+      renderHistory();
+    } else {
+      el.innerHTML=`<div class="history-loading"><div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card-sm"></div></div>`;
+    }
+  }
 }
 
 function renderHistory() {

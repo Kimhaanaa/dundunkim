@@ -286,7 +286,11 @@ var currentDate = new Date(), data = {}, photos = [null,null];
 var db = null;
 var CLOUD_NAME = "dcpbncvr5";
 
-function dateKey(d){ return d.toISOString().slice(0,10); }
+function dateKey(d){
+  var offset = d.getTimezoneOffset() * 60000;
+  var local = new Date(d.getTime() - offset);
+  return local.toISOString().slice(0,10);
+}
 function formatDate(d){ var days=['일','월','화','수','목','금','토']; return d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일 ('+days[d.getDay()]+')'; }
 function changeDate(dir){ var d=new Date(currentDate); d.setDate(d.getDate()+dir); if(d>new Date())return; currentDate=d; loadDay(); }
 function getDay(k){ return data[k]||{snacks:[],poops:[],poopStatus:'',walkDone:false,walkMinutes:30,walkTimes:[],walkActivity:'',meals:[],memo:'',photos:[null,null]}; }

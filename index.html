@@ -420,10 +420,23 @@ window.togglePoop=togglePoop; window.toggleWalk=toggleWalk; window.toggleWalkTim
 window.toggleMeal=toggleMeal; window.saveDay=saveDay; window.changeDate=changeDate;
 window.switchTab=switchTab; window.goToDate=goToDate; window.handlePhoto=handlePhoto; window.removePhoto=removePhoto;
 
+// 앱 초기 실행 (Firebase 응답 전에도 화면 먼저 보여줌)
+loadDay();
+
 // Firebase 실시간 수신
 onValue(ref(db,'dundun'), snapshot => {
-  const val=snapshot.val();
-  if(val){ data=val; loadDay(); if(document.getElementById('tab-history').classList.contains('active'))renderHistory(); }
+  const val = snapshot.val();
+  if(val) {
+    // 기존 로컬 사진 URL 유지
+    Object.keys(val).forEach(k => {
+      if(data[k] && data[k].photos) {
+        val[k].photos = val[k].photos || data[k].photos;
+      }
+    });
+    data = val;
+    loadDay();
+    if(document.getElementById('tab-history').classList.contains('active')) renderHistory();
+  }
 });
 </script>
 

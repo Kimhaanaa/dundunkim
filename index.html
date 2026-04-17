@@ -63,7 +63,7 @@
   .toggle { position: relative; width: 42px; height: 24px; }
   .toggle input { opacity: 0; width: 0; height: 0; }
   .toggle-slider { position: absolute; inset: 0; background: var(--color-border-md); border-radius: 24px; cursor: pointer; transition: .2s; }
-  .toggle-slider:before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; background: white; border-radius: 50%; transition: .2s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+  .toggle-slider:before { content: ""; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; background: white; border-radius: 50%; transition: .2s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
   .toggle input:checked + .toggle-slider { background: #F5A623; }
   .toggle input:checked + .toggle-slider:before { transform: translateX(18px); }
   .walk-input { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
@@ -147,21 +147,20 @@
     <div class="dog-name">김둔둔</div>
     <div class="dog-sub">🐾 포메라니안 · 일일 건강 기록</div>
   </div>
-  <div class="date-nav">
-    <button onclick="changeDate(-1)">← 이전</button>
-    <div class="date-label" id="date-label"></div>
-    <button onclick="changeDate(1)">다음 →</button>
-  </div>
   <div class="tab-bar">
     <button class="tab-btn active" onclick="switchTab('record')">📝 오늘 기록</button>
     <button class="tab-btn" onclick="switchTab('history')">📋 기록 보기</button>
   </div>
   <div id="tab-record" class="tab-content active">
+  <div class="date-nav">
+    <button onclick="changeDate(-1)">← 이전</button>
+    <div class="date-label" id="date-label"></div>
+    <button onclick="changeDate(1)">다음 →</button>
+  </div>
   <div class="summary-bar">
     <div class="stat-card"><div class="stat-val" id="summary-poop">0회</div><div class="stat-lbl">배변</div></div>
     <div class="stat-card"><div class="stat-val" id="summary-walk">-</div><div class="stat-lbl">산책</div></div>
   </div>
-
   <div class="section">
     <div class="section-title">📸 오늘의 둔둔이</div>
     <div class="photo-grid">
@@ -177,13 +176,11 @@
       </div>
     </div>
   </div>
-
   <div class="section">
     <div class="section-title">🦴 오늘의 간식</div>
     <div id="snack-list"></div>
     <button class="add-btn" onclick="addSnack()">+ 간식 추가</button>
   </div>
-
   <div class="section">
     <div class="section-title">💩 배변 활동</div>
     <div class="poop-count"><span id="poop-count">0</span>회<span class="poop-detail-text" id="poop-detail-text"></span></div>
@@ -195,7 +192,6 @@
       <div class="poop-btn pee-type" onclick="togglePoop(4)" id="poop-4"><span class="poop-emoji">🫧</span><span class="poop-label">쉬야 2</span></div>
     </div>
   </div>
-
   <div class="section">
     <div class="section-title">🐾 산책</div>
     <div class="toggle-row">
@@ -212,237 +208,185 @@
       </div>
     </div>
   </div>
-
   <div class="section">
     <div class="section-title">🥣 식사</div>
     <div class="meal-grid">
       <div class="meal-btn morning" onclick="toggleMeal(this)" data-val="아침 사료">
-        <div class="meal-icon-wrap">🥣</div>
-        <span class="meal-name">아침 밥</span>
-        <span class="meal-sub">사료 한 그릇!</span>
+        <div class="meal-icon-wrap">🥣</div><span class="meal-name">아침 밥</span><span class="meal-sub">사료 한 그릇!</span>
       </div>
       <div class="meal-btn evening" onclick="toggleMeal(this)" data-val="저녁 사료">
-        <div class="meal-icon-wrap">🍖</div>
-        <span class="meal-name">저녁 밥</span>
-        <span class="meal-sub">냠냠 맛있게!</span>
+        <div class="meal-icon-wrap">🍖</div><span class="meal-name">저녁 밥</span><span class="meal-sub">냠냠 맛있게!</span>
       </div>
       <div class="meal-btn water" onclick="toggleMeal(this)" data-val="물 잘 마심">
-        <div class="meal-icon-wrap">💧</div>
-        <span class="meal-name">물 잘 마심</span>
-        <span class="meal-sub">촉촉하게~</span>
+        <div class="meal-icon-wrap">💧</div><span class="meal-name">물 잘 마심</span><span class="meal-sub">촉촉하게~</span>
       </div>
       <div class="meal-btn no-appetite" onclick="toggleMeal(this)" data-val="식욕 부진">
-        <div class="meal-icon-wrap">🙁</div>
-        <span class="meal-name">입맛 없음</span>
-        <span class="meal-sub">오늘은 별로야</span>
+        <div class="meal-icon-wrap">🙁</div><span class="meal-name">입맛 없음</span><span class="meal-sub">오늘은 별로야</span>
       </div>
     </div>
   </div>
-
   <div class="section">
     <div class="section-title">📝 오늘의 메모</div>
     <textarea class="memo-textarea" id="memo-input" placeholder="오늘 둔둔이는 어땠나요? 🐶 특이사항이나 건강 상태를 적어보세요!"></textarea>
   </div>
   <button class="save-btn" onclick="saveDay()">🐾 오늘 기록 저장하기</button>
-  </div><!-- /tab-record -->
-
+  </div>
   <div id="tab-history" class="tab-content">
     <div id="history-list"></div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
 
-
-
-
-
-
-
-
-<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
 <script>
-// Firebase 초기화
-const firebaseConfig = {
-  apiKey: "AIzaSyC2Gy-vaAFOi4QLHEkj1WogCtqBl2S35rI",
-  authDomain: "kimdundun-65411.firebaseapp.com",
-  databaseURL: "https://kimdundun-65411-default-rtdb.firebaseio.com",
-  projectId: "kimdundun-65411",
-  storageBucket: "kimdundun-65411.firebasestorage.app",
-  messagingSenderId: "1094343336775",
-  appId: "1:1094343336775:web:1c88192d6ec5e00d346262"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-const CLOUD_NAME = "dcpbncvr5";
-
-let currentDate = new Date(), data = {}, photos = [null, null];
+firebase.initializeApp({
+  apiKey:"AIzaSyC2Gy-vaAFOi4QLHEkj1WogCtqBl2S35rI",
+  authDomain:"kimdundun-65411.firebaseapp.com",
+  databaseURL:"https://kimdundun-65411-default-rtdb.firebaseio.com",
+  projectId:"kimdundun-65411",
+  storageBucket:"kimdundun-65411.firebasestorage.app",
+  messagingSenderId:"1094343336775",
+  appId:"1:1094343336775:web:1c88192d6ec5e00d346262"
+});
+var db = firebase.database();
+var CLOUD_NAME = "dcpbncvr5";
+var currentDate = new Date(), data = {}, photos = [null,null];
 
 function dateKey(d){ return d.toISOString().slice(0,10); }
-function formatDate(d){ const days=['일','월','화','수','목','금','토']; return d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일 ('+days[d.getDay()]+')'; }
-function changeDate(dir){ const d=new Date(currentDate); d.setDate(d.getDate()+dir); if(d>new Date())return; currentDate=d; loadDay(); }
+function formatDate(d){ var days=['일','월','화','수','목','금','토']; return d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일 ('+days[d.getDay()]+')'; }
+function changeDate(dir){ var d=new Date(currentDate); d.setDate(d.getDate()+dir); if(d>new Date())return; currentDate=d; loadDay(); }
 function getDay(k){ return data[k]||{snacks:[],poops:[],walkDone:false,walkMinutes:30,walkTimes:[],meals:[],memo:'',photos:[null,null]}; }
 
-// Cloudinary 업로드
-async function uploadToCloudinary(base64) {
-  const blob = await fetch(base64).then(r=>r.blob());
-  const fd = new FormData();
-  fd.append('file', blob);
-  fd.append('upload_preset', 'dundun_preset');
-  try {
-    const res = await fetch('https://api.cloudinary.com/v1_1/'+CLOUD_NAME+'/image/upload', {method:'POST',body:fd});
-    const json = await res.json();
-    return json.secure_url || null;
-  } catch(e) { console.error('Cloudinary 실패', e); return null; }
-}
-
-function handlePhoto(idx, input) {
-  const file = input.files[0]; if(!file) return;
-  const reader = new FileReader();
-  reader.onload = async function(e) {
-    const base64 = e.target.result;
-    photos[idx] = base64;
-    renderPhotoSlot(idx, base64);
+function handlePhoto(idx,input){
+  var file=input.files[0]; if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var base64=e.target.result;
+    photos[idx]=base64; renderPhotoSlot(idx,base64);
     showToast('사진 업로드 중... ☁️');
-    const url = await uploadToCloudinary(base64);
-    if(url) {
-      photos[idx] = url;
-      const k=dateKey(currentDate), d=getDay(k);
-      d.photos = d.photos||[null,null];
-      d.photos[idx] = url;
-      data[k] = d;
-      showToast('사진 업로드 완료! 🐾');
-    }
+    var blob=null;
+    fetch(base64).then(function(r){return r.blob();}).then(function(b){
+      var fd=new FormData(); fd.append('file',b); fd.append('upload_preset','dundun_preset');
+      return fetch('https://api.cloudinary.com/v1_1/'+CLOUD_NAME+'/image/upload',{method:'POST',body:fd});
+    }).then(function(r){return r.json();}).then(function(json){
+      if(json.secure_url){
+        photos[idx]=json.secure_url;
+        var k=dateKey(currentDate),dd=getDay(k);
+        dd.photos=dd.photos||[null,null]; dd.photos[idx]=json.secure_url; data[k]=dd;
+        showToast('사진 업로드 완료! 🐾');
+      }
+    }).catch(function(){showToast('사진 업로드 실패 😢');});
   };
   reader.readAsDataURL(file);
 }
 
-function renderPhotoSlot(idx, src) {
-  const slot=document.getElementById('slot-'+idx), ph=document.getElementById('placeholder-'+idx), lbl=document.getElementById('label-'+idx);
-  let img=slot.querySelector('.photo-preview'), rmBtn=slot.querySelector('.photo-remove');
+function renderPhotoSlot(idx,src){
+  var slot=document.getElementById('slot-'+idx),ph=document.getElementById('placeholder-'+idx),lbl=document.getElementById('label-'+idx);
+  var img=slot.querySelector('.photo-preview'),rmBtn=slot.querySelector('.photo-remove');
   if(src){
     ph.style.display='none'; lbl.style.display='';
     if(!img){img=document.createElement('img');img.className='photo-preview';slot.appendChild(img);}
     img.src=src;
     if(!rmBtn){rmBtn=document.createElement('button');rmBtn.className='photo-remove';rmBtn.textContent='×';rmBtn.onclick=function(e){e.stopPropagation();removePhoto(idx);};slot.appendChild(rmBtn);}
-  } else {
+  }else{
     ph.style.display=''; lbl.style.display='none';
     if(img)img.remove(); if(rmBtn)rmBtn.remove();
   }
 }
+function removePhoto(idx){photos[idx]=null;renderPhotoSlot(idx,null);var k=dateKey(currentDate),d=getDay(k);d.photos=d.photos||[null,null];d.photos[idx]=null;data[k]=d;}
 
-function removePhoto(idx){
-  photos[idx]=null; renderPhotoSlot(idx,null);
-  const k=dateKey(currentDate),d=getDay(k);
-  d.photos=d.photos||[null,null]; d.photos[idx]=null; data[k]=d;
-}
-
-function loadDay() {
-  const k=dateKey(currentDate), d=getDay(k);
+function loadDay(){
+  var k=dateKey(currentDate),d=getDay(k);
   document.getElementById('date-label').textContent=formatDate(currentDate);
   renderSnacks(d.snacks);
-  for(let i=0;i<5;i++){const el=document.getElementById('poop-'+i);if(el)el.classList.toggle('active',(d.poops||[]).includes(i));}
+  for(var i=0;i<5;i++){var el=document.getElementById('poop-'+i);if(el)el.classList.toggle('active',(d.poops||[]).indexOf(i)!==-1);}
   updatePoopCount();
   document.getElementById('walk-toggle').checked=d.walkDone;
   document.getElementById('walk-detail').style.display=d.walkDone?'':'none';
   document.getElementById('walk-minutes').value=d.walkMinutes||30;
-  document.querySelectorAll('.walk-chip').forEach(function(c){c.classList.toggle('active',(d.walkTimes||[]).includes(c.dataset.val));});
-  document.querySelectorAll('.meal-btn').forEach(function(b){b.classList.toggle('active',(d.meals||[]).includes(b.dataset.val));});
+  document.querySelectorAll('.walk-chip').forEach(function(c){c.classList.toggle('active',(d.walkTimes||[]).indexOf(c.dataset.val)!==-1);});
+  document.querySelectorAll('.meal-btn').forEach(function(b){b.classList.toggle('active',(d.meals||[]).indexOf(b.dataset.val)!==-1);});
   document.getElementById('memo-input').value=d.memo||'';
   photos=d.photos||[null,null];
   renderPhotoSlot(0,photos[0]); renderPhotoSlot(1,photos[1]);
   updateSummary();
 }
 
-function renderSnacks(snacks) {
-  const c=document.getElementById('snack-list'); c.innerHTML='';
+function renderSnacks(snacks){
+  var c=document.getElementById('snack-list');c.innerHTML='';
   (snacks||[]).forEach(function(s,i){
-    const row=document.createElement('div'); row.className='snack-row';
-    row.innerHTML='<div class="snack-name"><input type="text" placeholder="🍖 간식 이름을 입력하세요" value="'+s.name+'" oninput="updateSnack('+i+',this.value)"></div><button class="snack-delete" onclick="removeSnack('+i+')">×</button>';
+    var row=document.createElement('div');row.className='snack-row';
+    row.innerHTML='<div class="snack-name"><input type="text" placeholder="🍖 간식 이름" value="'+s.name+'" oninput="updateSnack('+i+',this.value)"></div><button class="snack-delete" onclick="removeSnack('+i+')">×</button>';
     c.appendChild(row);
   });
 }
-
-function addSnack(){ const k=dateKey(currentDate),d=getDay(k); if(!d.snacks)d.snacks=[]; d.snacks.push({name:''}); data[k]=d; renderSnacks(d.snacks); }
-function removeSnack(i){ const k=dateKey(currentDate),d=getDay(k); d.snacks.splice(i,1); data[k]=d; renderSnacks(d.snacks); }
-function updateSnack(i,v){ const k=dateKey(currentDate),d=getDay(k); d.snacks[i].name=v; data[k]=d; }
+function addSnack(){var k=dateKey(currentDate),d=getDay(k);if(!d.snacks)d.snacks=[];d.snacks.push({name:''});data[k]=d;renderSnacks(d.snacks);}
+function removeSnack(i){var k=dateKey(currentDate),d=getDay(k);d.snacks.splice(i,1);data[k]=d;renderSnacks(d.snacks);}
+function updateSnack(i,v){var k=dateKey(currentDate),d=getDay(k);d.snacks[i].name=v;data[k]=d;}
 
 function togglePoop(i){
-  const k=dateKey(currentDate),d=getDay(k);
+  var k=dateKey(currentDate),d=getDay(k);
   if(!d.poops)d.poops=[];
-  const idx=d.poops.indexOf(i);
-  if(idx===-1)d.poops.push(i); else d.poops.splice(idx,1);
+  var idx=d.poops.indexOf(i);
+  if(idx===-1)d.poops.push(i);else d.poops.splice(idx,1);
   data[k]=d;
   document.getElementById('poop-'+i).classList.toggle('active');
-  updatePoopCount(); updateSummary();
+  updatePoopCount();updateSummary();
 }
-
 function updatePoopCount(){
-  const k=dateKey(currentDate),d=getDay(k);
-  const poops=d.poops||[];
-  const pc=poops.filter(function(i){return i<3;}).length;
-  const pe=poops.filter(function(i){return i>=3;}).length;
+  var k=dateKey(currentDate),d=getDay(k),poops=d.poops||[];
+  var pc=poops.filter(function(i){return i<3;}).length;
+  var pe=poops.filter(function(i){return i>=3;}).length;
   document.getElementById('poop-count').textContent=poops.length;
-  const parts=[];
-  if(pc>0)parts.push('응가 '+pc+'번');
-  if(pe>0)parts.push('쉬야 '+pe+'번');
+  var parts=[];if(pc>0)parts.push('응가 '+pc+'번');if(pe>0)parts.push('쉬야 '+pe+'번');
   document.getElementById('poop-detail-text').textContent=parts.join(' · ');
 }
-
 function toggleWalk(){
-  const k=dateKey(currentDate),d=getDay(k);
+  var k=dateKey(currentDate),d=getDay(k);
   d.walkDone=document.getElementById('walk-toggle').checked;
   data[k]=d;
   document.getElementById('walk-detail').style.display=d.walkDone?'':'none';
   updateSummary();
 }
-
 function toggleWalkTime(el){
-  const k=dateKey(currentDate),d=getDay(k),v=el.dataset.val;
+  var k=dateKey(currentDate),d=getDay(k),v=el.dataset.val;
   if(!d.walkTimes)d.walkTimes=[];
   el.classList.toggle('active');
-  if(d.walkTimes.includes(v))d.walkTimes=d.walkTimes.filter(function(t){return t!==v;});
-  else d.walkTimes.push(v);
+  var idx=d.walkTimes.indexOf(v);
+  if(idx!==-1)d.walkTimes.splice(idx,1);else d.walkTimes.push(v);
   data[k]=d;
 }
-
 function toggleMeal(el){
-  const k=dateKey(currentDate),d=getDay(k),v=el.dataset.val;
+  var k=dateKey(currentDate),d=getDay(k),v=el.dataset.val;
   if(!d.meals)d.meals=[];
   el.classList.toggle('active');
-  if(d.meals.includes(v))d.meals=d.meals.filter(function(m){return m!==v;});
-  else d.meals.push(v);
+  var idx=d.meals.indexOf(v);
+  if(idx!==-1)d.meals.splice(idx,1);else d.meals.push(v);
   data[k]=d;
 }
-
 function updateSummary(){
-  const k=dateKey(currentDate),d=getDay(k);
+  var k=dateKey(currentDate),d=getDay(k);
   document.getElementById('summary-poop').textContent=(d.poops||[]).length+'회';
-  const w=document.getElementById('walk-toggle').checked;
-  const m=parseInt(document.getElementById('walk-minutes').value)||0;
+  var w=document.getElementById('walk-toggle').checked;
+  var m=parseInt(document.getElementById('walk-minutes').value)||0;
   document.getElementById('summary-walk').textContent=w?m+'분':'-';
 }
-
 function saveDay(){
-  const k=dateKey(currentDate),d=getDay(k);
+  var k=dateKey(currentDate),d=getDay(k);
   d.memo=document.getElementById('memo-input').value;
   d.walkDone=document.getElementById('walk-toggle').checked;
   d.walkMinutes=parseInt(document.getElementById('walk-minutes').value)||0;
   d.photos=photos;
   data[k]=d;
   db.ref('dundun').set(data)
-    .then(function(){ showToast('둔둔이 기록 저장 완료! 🐾'); })
-    .catch(function(){ showToast('저장 실패 😢 다시 시도해주세요'); });
+    .then(function(){showToast('둔둔이 기록 저장 완료! 🐾');})
+    .catch(function(){showToast('저장 실패 😢');});
 }
-
 function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
+  var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
   setTimeout(function(){t.classList.remove('show');},2500);
 }
-
 function switchTab(tab){
   document.querySelectorAll('.tab-btn').forEach(function(b,i){
     b.classList.toggle('active',(tab==='record'&&i===0)||(tab==='history'&&i===1));
@@ -450,58 +394,48 @@ function switchTab(tab){
   document.getElementById('tab-record').classList.toggle('active',tab==='record');
   document.getElementById('tab-history').classList.toggle('active',tab==='history');
   if(tab==='history'){
-    const el=document.getElementById('history-list');
-    if(Object.keys(data).length>0) renderHistory();
+    var el=document.getElementById('history-list');
+    if(Object.keys(data).length>0)renderHistory();
     else el.innerHTML='<div class="history-loading"><div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card-sm"></div></div>';
   }
 }
-
 function renderHistory(){
-  const el=document.getElementById('history-list');
-  const keys=Object.keys(data).sort().reverse();
-  if(keys.length===0){
-    el.innerHTML='<div class="history-empty"><span class="history-empty-icon">🐾</span>아직 저장된 기록이 없어요!<br>오늘 기록을 먼저 저장해보세요.</div>';
-    return;
-  }
-  const days=['일','월','화','수','목','금','토'];
+  var el=document.getElementById('history-list');
+  var keys=Object.keys(data).sort().reverse();
+  if(keys.length===0){el.innerHTML='<div class="history-empty"><span class="history-empty-icon">🐾</span>아직 저장된 기록이 없어요!<br>오늘 기록을 먼저 저장해보세요.</div>';return;}
+  var days=['일','월','화','수','목','금','토'];
   el.innerHTML=keys.map(function(k){
-    const d=data[k];
-    const date=new Date(k);
-    const label=date.getFullYear()+'년 '+(date.getMonth()+1)+'월 '+date.getDate()+'일 ('+days[date.getDay()]+')';
-    const poops=d.poops||[];
-    const pc=poops.filter(function(i){return i<3;}).length;
-    const pe=poops.filter(function(i){return i>=3;}).length;
-    const chips=[];
+    var d=data[k],date=new Date(k);
+    var label=date.getFullYear()+'년 '+(date.getMonth()+1)+'월 '+date.getDate()+'일 ('+days[date.getDay()]+')';
+    var poops=d.poops||[];
+    var pc=poops.filter(function(i){return i<3;}).length;
+    var pe=poops.filter(function(i){return i>=3;}).length;
+    var chips=[];
     if(pc>0)chips.push('<span class="history-chip chip-poop">💩 응가 '+pc+'번</span>');
     if(pe>0)chips.push('<span class="history-chip chip-poop">🫧 쉬야 '+pe+'번</span>');
     if(d.walkDone)chips.push('<span class="history-chip chip-walk">🐾 산책 '+(d.walkMinutes||0)+'분</span>');
     (d.meals||[]).forEach(function(m){chips.push('<span class="history-chip chip-meal">🥣 '+m+'</span>');});
     (d.snacks||[]).filter(function(s){return s.name;}).forEach(function(s){chips.push('<span class="history-chip chip-snack">🦴 '+s.name+'</span>');});
-    const ph=(d.photos||[]).filter(Boolean);
-    const photoHtml=ph.length?'<div class="history-photos">'+ph.map(function(p){return '<img class="history-photo" src="'+p+'">';}).join('')+'</div>':'';
-    const memoHtml=d.memo?'<div class="history-memo">'+d.memo+'</div>':'';
-    return '<div class="history-card" onclick="goToDate(''+k+'')"><div class="history-date">'+label+'<span class="history-date-go">기록 보기 →</span></div>'+photoHtml+'<div class="history-chips">'+chips.join('')+'</div>'+memoHtml+'</div>';
+    var ph=(d.photos||[]).filter(Boolean);
+    var photoHtml=ph.length?'<div class="history-photos">'+ph.map(function(p){return '<img class="history-photo" src="'+p+'">';}).join('')+'</div>':'';
+    var memoHtml=d.memo?'<div class="history-memo">'+d.memo+'</div>':'';
+    return '<div class="history-card" data-key="'+k+'" onclick="goToDate(this.dataset.key)"><div class="history-date">'+label+'<span class="history-date-go">기록 보기 →</span></div>'+photoHtml+'<div class="history-chips">'+chips.join('')+'</div>'+memoHtml+'</div>';
   }).join('');
 }
+function goToDate(k){currentDate=new Date(k);switchTab('record');loadDay();}
 
-function goToDate(k){ currentDate=new Date(k); switchTab('record'); loadDay(); }
-
-// 앱 시작
 loadDay();
 
-// Firebase 실시간 수신
-db.ref('dundun').on('value', function(snapshot){
-  const val=snapshot.val();
+db.ref('dundun').on('value',function(snapshot){
+  var val=snapshot.val();
   if(val){
     Object.keys(val).forEach(function(k){
-      if(data[k]&&data[k].photos) val[k].photos=val[k].photos||data[k].photos;
+      if(data[k]&&data[k].photos)val[k].photos=val[k].photos||data[k].photos;
     });
-    data=val;
-    loadDay();
-    if(document.getElementById('tab-history').classList.contains('active')) renderHistory();
+    data=val;loadDay();
+    if(document.getElementById('tab-history').classList.contains('active'))renderHistory();
   }
 });
 </script>
-
 </body>
 </html>

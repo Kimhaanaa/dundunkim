@@ -52,12 +52,20 @@
   .add-btn:hover { background: var(--color-bg-secondary); }
   .poop-count { font-size: 20px; font-weight: 700; color: var(--color-text); text-align: center; margin-bottom: 12px; }
   .poop-detail-text { font-size: 12px; color: var(--color-text-secondary); display: block; font-weight: 400; margin-top: 2px; }
-  .poop-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .poop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
   .poop-btn { border: 1px solid var(--color-border); border-radius: 18px; padding: 10px 4px 8px; text-align: center; cursor: pointer; background: var(--color-bg-secondary); transition: all .15s; display: flex; flex-direction: column; align-items: center; gap: 4px; }
   .poop-emoji { font-size: 26px; line-height: 1; display: block; }
   .poop-label { font-size: 10px; color: var(--color-text-tertiary); font-weight: 600; }
   .poop-btn.poop-type.active { background: #FFF5E6; border-color: #E08A00; transform: scale(1.04); }
-  .poop-btn.pee-type.active { background: #EBF4FF; border-color: #378ADD; transform: scale(1.04); }
+  .poop-status-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+  .status-btn { border: 1px solid var(--color-border); border-radius: 14px; padding: 10px 8px; text-align: center; cursor: pointer; background: var(--color-bg-secondary); transition: all .15s; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .status-emoji { font-size: 22px; line-height: 1; }
+  .status-label { font-size: 11px; color: var(--color-text-secondary); font-weight: 600; }
+  .status-sub { font-size: 10px; color: var(--color-text-tertiary); }
+  .status-btn.good.active { background: #EAF7F0; border-color: #1D9E75; transform: scale(1.03); }
+  .status-btn.good.active .status-label { color: #0F6E56; }
+  .status-btn.warn.active { background: #FFF0E6; border-color: #E24B4A; transform: scale(1.03); }
+  .status-btn.warn.active .status-label { color: #A32D2D; }
   .toggle-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
   .toggle-label { font-size: 14px; color: var(--color-text); font-weight: 500; }
   .toggle { position: relative; width: 42px; height: 24px; }
@@ -66,7 +74,13 @@
   .toggle-slider:before { content: ""; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; background: white; border-radius: 50%; transition: .2s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
   .toggle input:checked + .toggle-slider { background: #F5A623; }
   .toggle input:checked + .toggle-slider:before { transform: translateX(18px); }
-  .walk-input { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+  .activity-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 10px; }
+  .activity-btn { border: 1px solid var(--color-border); border-radius: 14px; padding: 8px 4px; text-align: center; cursor: pointer; background: var(--color-bg-secondary); transition: all .15s; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .activity-emoji { font-size: 22px; font-weight: 700; line-height: 1; color: var(--color-text-secondary); }
+  .activity-btn.active .activity-emoji { color: #7A4F00; }
+  .activity-label { font-size: 9px; color: var(--color-text-tertiary); font-weight: 600; }
+  .activity-btn.active { background: #FFF3D6; border-color: #F5A623; transform: scale(1.04); }
+  .activity-btn.active .activity-label { color: #7A4F00; }
   .walk-input input[type=number] { width: 72px; font-size: 14px; padding: 7px 10px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg-secondary); color: var(--color-text); text-align: center; font-family: var(--font); outline: none; }
   .walk-input span { font-size: 13px; color: var(--color-text-secondary); }
   .walk-times { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
@@ -188,8 +202,18 @@
       <div class="poop-btn poop-type" onclick="togglePoop(0)" id="poop-0"><span class="poop-emoji">💩</span><span class="poop-label">응가 1</span></div>
       <div class="poop-btn poop-type" onclick="togglePoop(1)" id="poop-1"><span class="poop-emoji">💩</span><span class="poop-label">응가 2</span></div>
       <div class="poop-btn poop-type" onclick="togglePoop(2)" id="poop-2"><span class="poop-emoji">💩</span><span class="poop-label">응가 3</span></div>
-      <div class="poop-btn pee-type" onclick="togglePoop(3)" id="poop-3"><span class="poop-emoji">🫧</span><span class="poop-label">쉬야 1</span></div>
-      <div class="poop-btn pee-type" onclick="togglePoop(4)" id="poop-4"><span class="poop-emoji">🫧</span><span class="poop-label">쉬야 2</span></div>
+    </div>
+    <div class="poop-status-row">
+      <div class="status-btn good" onclick="togglePoopStatus('양호')" id="status-good">
+        <span class="status-emoji">✅</span>
+        <span class="status-label">양호</span>
+        <span class="status-sub">정상이에요</span>
+      </div>
+      <div class="status-btn warn" onclick="togglePoopStatus('주의')" id="status-warn">
+        <span class="status-emoji">⚠️</span>
+        <span class="status-label">주의</span>
+        <span class="status-sub">확인 필요해요</span>
+      </div>
     </div>
   </div>
   <div class="section">
@@ -201,10 +225,28 @@
     <div id="walk-detail" style="display:none;">
       <div class="walk-input"><input type="number" id="walk-minutes" min="0" max="300" value="30" oninput="updateSummary()"><span>분 산책했어요!</span></div>
       <div class="walk-times">
-        <div class="walk-chip" onclick="toggleWalkTime(this)" data-val="아침">🌅 아침</div>
-        <div class="walk-chip" onclick="toggleWalkTime(this)" data-val="점심">☀️ 점심</div>
-        <div class="walk-chip" onclick="toggleWalkTime(this)" data-val="저녁">🌆 저녁</div>
-        <div class="walk-chip" onclick="toggleWalkTime(this)" data-val="밤">🌙 밤</div>
+        <div class="walk-chip" onclick="toggleWalkTime(this)" data-val="아침">아침</div>
+        <div class="walk-chip" onclick="toggleWalkTime(this)" data-val="점심">점심</div>
+        <div class="walk-chip" onclick="toggleWalkTime(this)" data-val="저녁">저녁</div>
+        <div class="walk-chip" onclick="toggleWalkTime(this)" data-val="밤">밤</div>
+      </div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-top:12px;margin-bottom:4px;font-weight:600;">활동량</div>
+      <div class="activity-grid">
+        <div class="activity-btn" onclick="selectActivity(this)" data-val="1">
+          <span class="activity-emoji">1</span><span class="activity-label">매우 적음</span>
+        </div>
+        <div class="activity-btn" onclick="selectActivity(this)" data-val="2">
+          <span class="activity-emoji">2</span><span class="activity-label">적음</span>
+        </div>
+        <div class="activity-btn" onclick="selectActivity(this)" data-val="3">
+          <span class="activity-emoji">3</span><span class="activity-label">보통</span>
+        </div>
+        <div class="activity-btn" onclick="selectActivity(this)" data-val="4">
+          <span class="activity-emoji">4</span><span class="activity-label">많음</span>
+        </div>
+        <div class="activity-btn" onclick="selectActivity(this)" data-val="5">
+          <span class="activity-emoji">5</span><span class="activity-label">매우 많음</span>
+        </div>
       </div>
     </div>
   </div>
@@ -215,7 +257,7 @@
         <div class="meal-icon-wrap">🥣</div><span class="meal-name">아침 밥</span><span class="meal-sub">사료 한 그릇!</span>
       </div>
       <div class="meal-btn evening" onclick="toggleMeal(this)" data-val="저녁 사료">
-        <div class="meal-icon-wrap">🍖</div><span class="meal-name">저녁 밥</span><span class="meal-sub">냠냠 맛있게!</span>
+        <div class="meal-icon-wrap"><span style="filter:sepia(1) saturate(8) hue-rotate(340deg);">🥣</span></div><span class="meal-name">저녁 밥</span><span class="meal-sub">냠냠 맛있게!</span>
       </div>
       <div class="meal-btn water" onclick="toggleMeal(this)" data-val="물 잘 마심">
         <div class="meal-icon-wrap">💧</div><span class="meal-name">물 잘 마심</span><span class="meal-sub">촉촉하게~</span>
@@ -240,23 +282,32 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
-firebase.initializeApp({
-  apiKey:"AIzaSyC2Gy-vaAFOi4QLHEkj1WogCtqBl2S35rI",
-  authDomain:"kimdundun-65411.firebaseapp.com",
-  databaseURL:"https://kimdundun-65411-default-rtdb.firebaseio.com",
-  projectId:"kimdundun-65411",
-  storageBucket:"kimdundun-65411.firebasestorage.app",
-  messagingSenderId:"1094343336775",
-  appId:"1:1094343336775:web:1c88192d6ec5e00d346262"
-});
-var db = firebase.database();
-var CLOUD_NAME = "dcpbncvr5";
 var currentDate = new Date(), data = {}, photos = [null,null];
+var db = null;
+var CLOUD_NAME = "dcpbncvr5";
 
 function dateKey(d){ return d.toISOString().slice(0,10); }
 function formatDate(d){ var days=['일','월','화','수','목','금','토']; return d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일 ('+days[d.getDay()]+')'; }
 function changeDate(dir){ var d=new Date(currentDate); d.setDate(d.getDate()+dir); if(d>new Date())return; currentDate=d; loadDay(); }
-function getDay(k){ return data[k]||{snacks:[],poops:[],walkDone:false,walkMinutes:30,walkTimes:[],meals:[],memo:'',photos:[null,null]}; }
+function getDay(k){ return data[k]||{snacks:[],poops:[],poopStatus:'',walkDone:false,walkMinutes:30,walkTimes:[],walkActivity:'',meals:[],memo:'',photos:[null,null]}; }
+
+function togglePoopStatus(val){
+  var k=dateKey(currentDate),d=getDay(k);
+  d.poopStatus = d.poopStatus===val ? '' : val;
+  data[k]=d;
+  document.getElementById('status-good').classList.toggle('active', d.poopStatus==='양호');
+  document.getElementById('status-warn').classList.toggle('active', d.poopStatus==='주의');
+}
+
+function selectActivity(el){
+  var k=dateKey(currentDate),d=getDay(k);
+  var val=el.dataset.val;
+  d.walkActivity = d.walkActivity===val ? '' : val;
+  data[k]=d;
+  document.querySelectorAll('.activity-btn').forEach(function(b){
+    b.classList.toggle('active', b.dataset.val===d.walkActivity);
+  });
+}
 
 function handlePhoto(idx,input){
   var file=input.files[0]; if(!file)return;
@@ -306,6 +357,10 @@ function loadDay(){
   document.getElementById('walk-detail').style.display=d.walkDone?'':'none';
   document.getElementById('walk-minutes').value=d.walkMinutes||30;
   document.querySelectorAll('.walk-chip').forEach(function(c){c.classList.toggle('active',(d.walkTimes||[]).indexOf(c.dataset.val)!==-1);});
+  document.querySelectorAll('.activity-btn').forEach(function(b){b.classList.toggle('active', b.dataset.val===(d.walkActivity||''));});
+  var sg=document.getElementById('status-good'), sw=document.getElementById('status-warn');
+  if(sg) sg.classList.toggle('active', d.poopStatus==='양호');
+  if(sw) sw.classList.toggle('active', d.poopStatus==='주의');
   document.querySelectorAll('.meal-btn').forEach(function(b){b.classList.toggle('active',(d.meals||[]).indexOf(b.dataset.val)!==-1);});
   document.getElementById('memo-input').value=d.memo||'';
   photos=d.photos||[null,null];
@@ -336,11 +391,10 @@ function togglePoop(i){
 }
 function updatePoopCount(){
   var k=dateKey(currentDate),d=getDay(k),poops=d.poops||[];
-  var pc=poops.filter(function(i){return i<3;}).length;
-  var pe=poops.filter(function(i){return i>=3;}).length;
   document.getElementById('poop-count').textContent=poops.length;
-  var parts=[];if(pc>0)parts.push('응가 '+pc+'번');if(pe>0)parts.push('쉬야 '+pe+'번');
-  document.getElementById('poop-detail-text').textContent=parts.join(' · ');
+  var txt = poops.length>0 ? '응가 '+poops.length+'번' : '';
+  if(d.poopStatus) txt += (txt?' · ':'')+d.poopStatus;
+  document.getElementById('poop-detail-text').textContent=txt;
 }
 function toggleWalk(){
   var k=dateKey(currentDate),d=getDay(k);
@@ -377,6 +431,7 @@ function saveDay(){
   d.memo=document.getElementById('memo-input').value;
   d.walkDone=document.getElementById('walk-toggle').checked;
   d.walkMinutes=parseInt(document.getElementById('walk-minutes').value)||0;
+  d.walkActivity=d.walkActivity||'';
   d.photos=photos;
   data[k]=d;
   db.ref('dundun').set(data)
@@ -422,19 +477,38 @@ function renderHistory(){
     return '<div class="history-card" data-key="'+k+'" onclick="goToDate(this.dataset.key)"><div class="history-date">'+label+'<span class="history-date-go">기록 보기 →</span></div>'+photoHtml+'<div class="history-chips">'+chips.join('')+'</div>'+memoHtml+'</div>';
   }).join('');
 }
-function goToDate(k){currentDate=new Date(k);switchTab('record');loadDay();}
+function goToDate(k){
+  var parts=k.split('-');
+  currentDate=new Date(parseInt(parts[0]),parseInt(parts[1])-1,parseInt(parts[2]));
+  switchTab('record');
+  loadDay();
+}
 
-loadDay();
-
-db.ref('dundun').on('value',function(snapshot){
-  var val=snapshot.val();
-  if(val){
-    Object.keys(val).forEach(function(k){
-      if(data[k]&&data[k].photos)val[k].photos=val[k].photos||data[k].photos;
-    });
-    data=val;loadDay();
-    if(document.getElementById('tab-history').classList.contains('active'))renderHistory();
-  }
+document.addEventListener('DOMContentLoaded', function() {
+  firebase.initializeApp({
+    apiKey:"AIzaSyC2Gy-vaAFOi4QLHEkj1WogCtqBl2S35rI",
+    authDomain:"kimdundun-65411.firebaseapp.com",
+    databaseURL:"https://kimdundun-65411-default-rtdb.firebaseio.com",
+    projectId:"kimdundun-65411",
+    storageBucket:"kimdundun-65411.firebasestorage.app",
+    messagingSenderId:"1094343336775",
+    appId:"1:1094343336775:web:1c88192d6ec5e00d346262"
+  });
+  db = firebase.database();
+  loadDay();
+  db.ref('dundun').on('value', function(snapshot){
+    var val=snapshot.val();
+    if(val){
+      Object.keys(val).forEach(function(k){
+        if(data[k]&&data[k].photos)val[k].photos=val[k].photos||data[k].photos;
+      });
+      data=val;
+      if(currentDate && !isNaN(currentDate.getTime())) {
+        loadDay();
+        if(document.getElementById('tab-history').classList.contains('active'))renderHistory();
+      }
+    }
+  });
 });
 </script>
 </body>

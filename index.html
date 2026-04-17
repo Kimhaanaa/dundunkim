@@ -256,10 +256,15 @@
 
 
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
+
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+// Firebase 초기화
 const firebaseConfig = {
   apiKey: "AIzaSyC2Gy-vaAFOi4QLHEkj1WogCtqBl2S35rI",
   authDomain: "kimdundun-65411.firebaseapp.com",
@@ -269,42 +274,39 @@ const firebaseConfig = {
   messagingSenderId: "1094343336775",
   appId: "1:1094343336775:web:1c88192d6ec5e00d346262"
 };
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 const CLOUD_NAME = "dcpbncvr5";
 
 let currentDate = new Date(), data = {}, photos = [null, null];
 
 function dateKey(d){ return d.toISOString().slice(0,10); }
-function formatDate(d){ const days=['일','월','화','수','목','금','토']; return `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 (${days[d.getDay()]})`; }
+function formatDate(d){ const days=['일','월','화','수','목','금','토']; return d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일 ('+days[d.getDay()]+')'; }
 function changeDate(dir){ const d=new Date(currentDate); d.setDate(d.getDate()+dir); if(d>new Date())return; currentDate=d; loadDay(); }
 function getDay(k){ return data[k]||{snacks:[],poops:[],walkDone:false,walkMinutes:30,walkTimes:[],meals:[],memo:'',photos:[null,null]}; }
 
 // Cloudinary 업로드
-async function uploadToCloudinary(base64, idx) {
+async function uploadToCloudinary(base64) {
   const blob = await fetch(base64).then(r=>r.blob());
   const fd = new FormData();
   fd.append('file', blob);
   fd.append('upload_preset', 'dundun_preset');
   try {
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method:'POST', body:fd });
+    const res = await fetch('https://api.cloudinary.com/v1_1/'+CLOUD_NAME+'/image/upload', {method:'POST',body:fd});
     const json = await res.json();
     return json.secure_url || null;
-  } catch(e) {
-    console.error('Cloudinary 업로드 실패', e);
-    return null;
-  }
+  } catch(e) { console.error('Cloudinary 실패', e); return null; }
 }
 
 function handlePhoto(idx, input) {
   const file = input.files[0]; if(!file) return;
   const reader = new FileReader();
-  reader.onload = async e => {
+  reader.onload = async function(e) {
     const base64 = e.target.result;
     photos[idx] = base64;
     renderPhotoSlot(idx, base64);
     showToast('사진 업로드 중... ☁️');
-    const url = await uploadToCloudinary(base64, idx);
+    const url = await uploadToCloudinary(base64);
     if(url) {
       photos[idx] = url;
       const k=dateKey(currentDate), d=getDay(k);
@@ -320,25 +322,35 @@ function handlePhoto(idx, input) {
 function renderPhotoSlot(idx, src) {
   const slot=document.getElementById('slot-'+idx), ph=document.getElementById('placeholder-'+idx), lbl=document.getElementById('label-'+idx);
   let img=slot.querySelector('.photo-preview'), rmBtn=slot.querySelector('.photo-remove');
-  if(src){ ph.style.display='none'; lbl.style.display='';
-    if(!img){img=document.createElement('img');img.className='photo-preview';slot.appendChild(img);} img.src=src;
-    if(!rmBtn){rmBtn=document.createElement('button');rmBtn.className='photo-remove';rmBtn.textContent='×';rmBtn.onclick=e=>{e.stopPropagation();removePhoto(idx);};slot.appendChild(rmBtn);}
-  } else { ph.style.display=''; lbl.style.display='none'; if(img)img.remove(); if(rmBtn)rmBtn.remove(); }
+  if(src){
+    ph.style.display='none'; lbl.style.display='';
+    if(!img){img=document.createElement('img');img.className='photo-preview';slot.appendChild(img);}
+    img.src=src;
+    if(!rmBtn){rmBtn=document.createElement('button');rmBtn.className='photo-remove';rmBtn.textContent='×';rmBtn.onclick=function(e){e.stopPropagation();removePhoto(idx);};slot.appendChild(rmBtn);}
+  } else {
+    ph.style.display=''; lbl.style.display='none';
+    if(img)img.remove(); if(rmBtn)rmBtn.remove();
+  }
 }
-function removePhoto(idx){ photos[idx]=null; renderPhotoSlot(idx,null); const k=dateKey(currentDate),d=getDay(k); d.photos=d.photos||[null,null]; d.photos[idx]=null; data[k]=d; }
+
+function removePhoto(idx){
+  photos[idx]=null; renderPhotoSlot(idx,null);
+  const k=dateKey(currentDate),d=getDay(k);
+  d.photos=d.photos||[null,null]; d.photos[idx]=null; data[k]=d;
+}
 
 function loadDay() {
   const k=dateKey(currentDate), d=getDay(k);
   document.getElementById('date-label').textContent=formatDate(currentDate);
   renderSnacks(d.snacks);
-  for(let i=0;i<5;i++){const el=document.getElementById('poop-'+i);if(el)el.classList.toggle('active',d.poops.includes(i));}
+  for(let i=0;i<5;i++){const el=document.getElementById('poop-'+i);if(el)el.classList.toggle('active',(d.poops||[]).includes(i));}
   updatePoopCount();
-  const wt=document.getElementById('walk-toggle'); wt.checked=d.walkDone;
+  document.getElementById('walk-toggle').checked=d.walkDone;
   document.getElementById('walk-detail').style.display=d.walkDone?'':'none';
-  document.getElementById('walk-minutes').value=d.walkMinutes;
-  document.querySelectorAll('.walk-chip').forEach(c=>c.classList.toggle('active',d.walkTimes.includes(c.dataset.val)));
-  document.querySelectorAll('.meal-btn').forEach(b=>b.classList.toggle('active',d.meals.includes(b.dataset.val)));
-  document.getElementById('memo-input').value=d.memo;
+  document.getElementById('walk-minutes').value=d.walkMinutes||30;
+  document.querySelectorAll('.walk-chip').forEach(function(c){c.classList.toggle('active',(d.walkTimes||[]).includes(c.dataset.val));});
+  document.querySelectorAll('.meal-btn').forEach(function(b){b.classList.toggle('active',(d.meals||[]).includes(b.dataset.val));});
+  document.getElementById('memo-input').value=d.memo||'';
   photos=d.photos||[null,null];
   renderPhotoSlot(0,photos[0]); renderPhotoSlot(1,photos[1]);
   updateSummary();
@@ -346,94 +358,145 @@ function loadDay() {
 
 function renderSnacks(snacks) {
   const c=document.getElementById('snack-list'); c.innerHTML='';
-  snacks.forEach((s,i)=>{ const row=document.createElement('div'); row.className='snack-row';
-    row.innerHTML=`<div class="snack-name"><input type="text" placeholder="🍖 간식 이름을 입력하세요" value="${s.name}" oninput="updateSnack(${i},this.value)"></div><button class="snack-delete" onclick="removeSnack(${i})">×</button>`;
-    c.appendChild(row); });
+  (snacks||[]).forEach(function(s,i){
+    const row=document.createElement('div'); row.className='snack-row';
+    row.innerHTML='<div class="snack-name"><input type="text" placeholder="🍖 간식 이름을 입력하세요" value="'+s.name+'" oninput="updateSnack('+i+',this.value)"></div><button class="snack-delete" onclick="removeSnack('+i+')">×</button>';
+    c.appendChild(row);
+  });
 }
-function addSnack(){ const k=dateKey(currentDate),d=getDay(k); d.snacks.push({name:''}); data[k]=d; renderSnacks(d.snacks); }
+
+function addSnack(){ const k=dateKey(currentDate),d=getDay(k); if(!d.snacks)d.snacks=[]; d.snacks.push({name:''}); data[k]=d; renderSnacks(d.snacks); }
 function removeSnack(i){ const k=dateKey(currentDate),d=getDay(k); d.snacks.splice(i,1); data[k]=d; renderSnacks(d.snacks); }
 function updateSnack(i,v){ const k=dateKey(currentDate),d=getDay(k); d.snacks[i].name=v; data[k]=d; }
-function togglePoop(i){ const k=dateKey(currentDate),d=getDay(k); const idx=d.poops.indexOf(i); if(idx===-1)d.poops.push(i);else d.poops.splice(idx,1); data[k]=d; document.getElementById('poop-'+i).classList.toggle('active'); updatePoopCount(); updateSummary(); }
-function updatePoopCount(){ const k=dateKey(currentDate),d=getDay(k); const pc=d.poops.filter(i=>i<3).length,pe=d.poops.filter(i=>i>=3).length; document.getElementById('poop-count').textContent=d.poops.length; const parts=[]; if(pc>0)parts.push(`응가 ${pc}번`); if(pe>0)parts.push(`쉬야 ${pe}번`); document.getElementById('poop-detail-text').textContent=parts.join(' · '); }
-function toggleWalk(){ const k=dateKey(currentDate),d=getDay(k); d.walkDone=document.getElementById('walk-toggle').checked; data[k]=d; document.getElementById('walk-detail').style.display=d.walkDone?'':'none'; updateSummary(); }
-function toggleWalkTime(el){ const k=dateKey(currentDate),d=getDay(k),v=el.dataset.val; el.classList.toggle('active'); if(d.walkTimes.includes(v))d.walkTimes=d.walkTimes.filter(t=>t!==v);else d.walkTimes.push(v); data[k]=d; }
-function toggleMeal(el){ const k=dateKey(currentDate),d=getDay(k),v=el.dataset.val; el.classList.toggle('active'); if(d.meals.includes(v))d.meals=d.meals.filter(m=>m!==v);else d.meals.push(v); data[k]=d; }
-function updateSummary(){ const k=dateKey(currentDate),d=getDay(k); document.getElementById('summary-poop').textContent=d.poops.length+'회'; const w=document.getElementById('walk-toggle').checked,m=parseInt(document.getElementById('walk-minutes').value)||0; document.getElementById('summary-walk').textContent=w?m+'분':'-'; }
 
-function saveDay() {
+function togglePoop(i){
+  const k=dateKey(currentDate),d=getDay(k);
+  if(!d.poops)d.poops=[];
+  const idx=d.poops.indexOf(i);
+  if(idx===-1)d.poops.push(i); else d.poops.splice(idx,1);
+  data[k]=d;
+  document.getElementById('poop-'+i).classList.toggle('active');
+  updatePoopCount(); updateSummary();
+}
+
+function updatePoopCount(){
+  const k=dateKey(currentDate),d=getDay(k);
+  const poops=d.poops||[];
+  const pc=poops.filter(function(i){return i<3;}).length;
+  const pe=poops.filter(function(i){return i>=3;}).length;
+  document.getElementById('poop-count').textContent=poops.length;
+  const parts=[];
+  if(pc>0)parts.push('응가 '+pc+'번');
+  if(pe>0)parts.push('쉬야 '+pe+'번');
+  document.getElementById('poop-detail-text').textContent=parts.join(' · ');
+}
+
+function toggleWalk(){
+  const k=dateKey(currentDate),d=getDay(k);
+  d.walkDone=document.getElementById('walk-toggle').checked;
+  data[k]=d;
+  document.getElementById('walk-detail').style.display=d.walkDone?'':'none';
+  updateSummary();
+}
+
+function toggleWalkTime(el){
+  const k=dateKey(currentDate),d=getDay(k),v=el.dataset.val;
+  if(!d.walkTimes)d.walkTimes=[];
+  el.classList.toggle('active');
+  if(d.walkTimes.includes(v))d.walkTimes=d.walkTimes.filter(function(t){return t!==v;});
+  else d.walkTimes.push(v);
+  data[k]=d;
+}
+
+function toggleMeal(el){
+  const k=dateKey(currentDate),d=getDay(k),v=el.dataset.val;
+  if(!d.meals)d.meals=[];
+  el.classList.toggle('active');
+  if(d.meals.includes(v))d.meals=d.meals.filter(function(m){return m!==v;});
+  else d.meals.push(v);
+  data[k]=d;
+}
+
+function updateSummary(){
+  const k=dateKey(currentDate),d=getDay(k);
+  document.getElementById('summary-poop').textContent=(d.poops||[]).length+'회';
+  const w=document.getElementById('walk-toggle').checked;
+  const m=parseInt(document.getElementById('walk-minutes').value)||0;
+  document.getElementById('summary-walk').textContent=w?m+'분':'-';
+}
+
+function saveDay(){
   const k=dateKey(currentDate),d=getDay(k);
   d.memo=document.getElementById('memo-input').value;
   d.walkDone=document.getElementById('walk-toggle').checked;
   d.walkMinutes=parseInt(document.getElementById('walk-minutes').value)||0;
   d.photos=photos;
   data[k]=d;
-  set(ref(db,'dundun'), data)
-    .then(()=>showToast('둔둔이 기록 저장 완료! 🐾'))
-    .catch(()=>showToast('저장 실패 😢 다시 시도해주세요'));
+  db.ref('dundun').set(data)
+    .then(function(){ showToast('둔둔이 기록 저장 완료! 🐾'); })
+    .catch(function(){ showToast('저장 실패 😢 다시 시도해주세요'); });
 }
 
-function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},2500);
+}
 
-function switchTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',(tab==='record'&&i===0)||(tab==='history'&&i===1)));
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(function(b,i){
+    b.classList.toggle('active',(tab==='record'&&i===0)||(tab==='history'&&i===1));
+  });
   document.getElementById('tab-record').classList.toggle('active',tab==='record');
   document.getElementById('tab-history').classList.toggle('active',tab==='history');
-  if(tab==='history') {
+  if(tab==='history'){
     const el=document.getElementById('history-list');
-    // 데이터 있으면 바로 렌더, 없으면 스켈레톤
-    if(Object.keys(data).length > 0) {
-      renderHistory();
-    } else {
-      el.innerHTML=`<div class="history-loading"><div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card-sm"></div></div>`;
-    }
+    if(Object.keys(data).length>0) renderHistory();
+    else el.innerHTML='<div class="history-loading"><div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card-sm"></div></div>';
   }
 }
 
-function renderHistory() {
+function renderHistory(){
   const el=document.getElementById('history-list');
   const keys=Object.keys(data).sort().reverse();
-  if(keys.length===0){ el.innerHTML='<div class="history-empty"><span class="history-empty-icon">🐾</span>아직 저장된 기록이 없어요!<br>오늘 기록을 먼저 저장해보세요.</div>'; return; }
+  if(keys.length===0){
+    el.innerHTML='<div class="history-empty"><span class="history-empty-icon">🐾</span>아직 저장된 기록이 없어요!<br>오늘 기록을 먼저 저장해보세요.</div>';
+    return;
+  }
   const days=['일','월','화','수','목','금','토'];
-  el.innerHTML=keys.map(k=>{
+  el.innerHTML=keys.map(function(k){
     const d=data[k];
     const date=new Date(k);
-    const label=`${date.getFullYear()}년 ${date.getMonth()+1}월 ${date.getDate()}일 (${days[date.getDay()]})`;
-    const pc=(d.poops||[]).filter(i=>i<3).length, pe=(d.poops||[]).filter(i=>i>=3).length;
+    const label=date.getFullYear()+'년 '+(date.getMonth()+1)+'월 '+date.getDate()+'일 ('+days[date.getDay()]+')';
+    const poops=d.poops||[];
+    const pc=poops.filter(function(i){return i<3;}).length;
+    const pe=poops.filter(function(i){return i>=3;}).length;
     const chips=[];
-    if(pc>0)chips.push(`<span class="history-chip chip-poop">💩 응가 ${pc}번</span>`);
-    if(pe>0)chips.push(`<span class="history-chip chip-poop">🫧 쉬야 ${pe}번</span>`);
-    if(d.walkDone)chips.push(`<span class="history-chip chip-walk">🐾 산책 ${d.walkMinutes||0}분</span>`);
-    (d.meals||[]).forEach(m=>chips.push(`<span class="history-chip chip-meal">🥣 ${m}</span>`));
-    (d.snacks||[]).filter(s=>s.name).forEach(s=>chips.push(`<span class="history-chip chip-snack">🦴 ${s.name}</span>`));
+    if(pc>0)chips.push('<span class="history-chip chip-poop">💩 응가 '+pc+'번</span>');
+    if(pe>0)chips.push('<span class="history-chip chip-poop">🫧 쉬야 '+pe+'번</span>');
+    if(d.walkDone)chips.push('<span class="history-chip chip-walk">🐾 산책 '+(d.walkMinutes||0)+'분</span>');
+    (d.meals||[]).forEach(function(m){chips.push('<span class="history-chip chip-meal">🥣 '+m+'</span>');});
+    (d.snacks||[]).filter(function(s){return s.name;}).forEach(function(s){chips.push('<span class="history-chip chip-snack">🦴 '+s.name+'</span>');});
     const ph=(d.photos||[]).filter(Boolean);
-    const photoHtml=ph.length?`<div class="history-photos">${ph.map(p=>`<img class="history-photo" src="${p}">`).join('')}</div>`:'';
-    const memoHtml=d.memo?`<div class="history-memo">${d.memo}</div>`:'';
-    return `<div class="history-card" onclick="goToDate('${k}')"><div class="history-date">${label}<span class="history-date-go">기록 보기 →</span></div>${photoHtml}<div class="history-chips">${chips.join('')}</div>${memoHtml}</div>`;
+    const photoHtml=ph.length?'<div class="history-photos">'+ph.map(function(p){return '<img class="history-photo" src="'+p+'">';}).join('')+'</div>':'';
+    const memoHtml=d.memo?'<div class="history-memo">'+d.memo+'</div>':'';
+    return '<div class="history-card" onclick="goToDate(''+k+'')"><div class="history-date">'+label+'<span class="history-date-go">기록 보기 →</span></div>'+photoHtml+'<div class="history-chips">'+chips.join('')+'</div>'+memoHtml+'</div>';
   }).join('');
 }
 
 function goToDate(k){ currentDate=new Date(k); switchTab('record'); loadDay(); }
 
-// onclick 연결 (모듈 스코프 -> 전역)
-window.addSnack=addSnack; window.removeSnack=removeSnack; window.updateSnack=updateSnack;
-window.togglePoop=togglePoop; window.toggleWalk=toggleWalk; window.toggleWalkTime=toggleWalkTime;
-window.toggleMeal=toggleMeal; window.saveDay=saveDay; window.changeDate=changeDate;
-window.switchTab=switchTab; window.goToDate=goToDate; window.handlePhoto=handlePhoto; window.removePhoto=removePhoto;
-
-// 앱 초기 실행 (Firebase 응답 전에도 화면 먼저 보여줌)
+// 앱 시작
 loadDay();
 
 // Firebase 실시간 수신
-onValue(ref(db,'dundun'), snapshot => {
-  const val = snapshot.val();
-  if(val) {
-    // 기존 로컬 사진 URL 유지
-    Object.keys(val).forEach(k => {
-      if(data[k] && data[k].photos) {
-        val[k].photos = val[k].photos || data[k].photos;
-      }
+db.ref('dundun').on('value', function(snapshot){
+  const val=snapshot.val();
+  if(val){
+    Object.keys(val).forEach(function(k){
+      if(data[k]&&data[k].photos) val[k].photos=val[k].photos||data[k].photos;
     });
-    data = val;
+    data=val;
     loadDay();
     if(document.getElementById('tab-history').classList.contains('active')) renderHistory();
   }
